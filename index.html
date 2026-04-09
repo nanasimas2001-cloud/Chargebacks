@@ -401,25 +401,26 @@
   /* action bubble variants */
   .chat-bubble.action-urgent{background:#a32020;border-color:#a32020;color:#fff;max-width:92%}
   .chat-bubble.action-urgent strong{color:#fff}
-  .chat-bubble.action-urgent .cbk-ref{background:rgba(255,255,255,.2);color:#fff}
-  .chat-bubble.action-warn{background:var(--text);border-color:var(--text);color:#fff;max-width:92%}
-  .chat-bubble.action-warn strong{color:#fff}
-  .chat-bubble.action-warn .cbk-ref{background:rgba(255,255,255,.2);color:#fff}
-  .chat-bubble.action-waiting{background:#1a56db;border-color:#1a56db;color:#fff;max-width:92%}
-  .chat-bubble.action-waiting strong{color:#fff}
+  .chat-bubble.action-urgent .cbk-ref{background:rgba(74,82,32,.12);color:var(--olive)}
+  .chat-bubble.action-urgent{background:rgba(200,228,74,.18);border-color:var(--accent);color:var(--accent-text);max-width:92%}
+  .chat-bubble.action-urgent strong{color:var(--olive)}
+  .chat-bubble.action-urgent .cbk-ref{background:rgba(74,82,32,.12);color:var(--olive)}
+  .chat-bubble.action-warn{background:rgba(200,228,74,.18);border-color:var(--accent);color:var(--accent-text);max-width:92%}
+  .chat-bubble.action-warn strong{color:var(--olive)}
+  .chat-bubble.action-warn .cbk-ref{background:rgba(74,82,32,.12);color:var(--olive)}
+  .chat-bubble.action-waiting{background:rgba(200,228,74,.18);border-color:var(--accent);color:var(--accent-text);max-width:92%}
+  .chat-bubble.action-waiting strong{color:var(--olive)}
 
   /* deadline bar inside bubble */
-  .bubble-deadline-bar-wrap{background:rgba(255,255,255,.25);border-radius:99px;height:4px;width:100%;margin:8px 0 4px;overflow:hidden}
-  .bubble-deadline-bar{height:4px;background:#fff;border-radius:99px}
-  .bubble-deadline-row{display:flex;justify-content:space-between;font-size:10px;opacity:.8;margin-bottom:10px}
+  .bubble-deadline-bar-wrap{background:rgba(74,82,32,.15);border-radius:99px;height:4px;width:100%;margin:8px 0 4px;overflow:hidden}
+  .bubble-deadline-bar{height:4px;background:var(--olive);border-radius:99px}
+  .bubble-deadline-row{display:flex;justify-content:space-between;font-size:10px;color:var(--olive);opacity:.8;margin-bottom:10px}
 
   /* in-bubble action buttons */
-  .bubble-action-btn{display:block;width:100%;margin-top:8px;padding:9px 14px;border:none;border-radius:10px;background:rgba(255,255,255,.15);color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:background .15s;border:1px solid rgba(255,255,255,.3)}
-  .bubble-action-btn:hover{background:rgba(255,255,255,.28)}
-  .bubble-action-btn.solid{background:#fff;border-color:#fff}
-  .chat-bubble.action-urgent .bubble-action-btn.solid{color:#a32020}
-  .chat-bubble.action-warn .bubble-action-btn.solid{color:var(--text)}
-  .chat-bubble.action-waiting .bubble-action-btn.solid{color:#1a56db}
+  .bubble-action-btn{display:block;width:100%;margin-top:8px;padding:9px 14px;border-radius:10px;background:rgba(74,82,32,.08);color:var(--olive);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:background .15s;border:1px solid rgba(74,82,32,.2)}
+  .bubble-action-btn:hover{background:rgba(74,82,32,.15)}
+  .bubble-action-btn.solid{background:var(--olive);color:var(--olive-text);border-color:var(--olive)}
+  .bubble-action-btn.solid:hover{opacity:.88}
 
   .chat-messages{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
   .chat-messages::-webkit-scrollbar{width:4px}
@@ -1066,9 +1067,9 @@ function openChat(intent) {
       ? `🚨 <strong>Urgent — only ${daysNum} days left</strong>`
       : `⚠️ <strong>Response needed — ${daysNum} days remaining</strong>`;
     const firstBubbleHtml = `
-      <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.75;margin-bottom:6px">${urgencyLine}</div>
-      <div style="font-size:22px;font-weight:700;line-height:1.1;margin-bottom:2px">${r.txnAmt}</div>
-      <div style="font-size:11px;opacity:.8;margin-bottom:10px">${r.reason} · <span class="cbk-ref">${r.id}</span></div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--olive);margin-bottom:6px">${urgencyLine}</div>
+      <div style="font-size:22px;font-weight:700;color:var(--olive);line-height:1.1;margin-bottom:2px">${r.txnAmt}</div>
+      <div style="font-size:11px;color:var(--olive);opacity:.8;margin-bottom:10px">${r.reason} · <span class="cbk-ref">${r.id}</span></div>
       ${daysNum ? `<div class="bubble-deadline-bar-wrap"><div class="bubble-deadline-bar" style="width:${pct}%"></div></div>
       <div class="bubble-deadline-row"><span>${daysNum} days left</span><span>Due ${dueDate}</span></div>` : ''}
       A cardholder has disputed this payment. Submit your evidence before the deadline — after that Teya can no longer contest it on your behalf.
@@ -1083,9 +1084,9 @@ function openChat(intent) {
 
   } else if (r.status === 'in_progress') {
     const firstBubbleHtml = `
-      <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;opacity:.8;margin-bottom:6px">⏳ Under review</div>
-      <div style="font-size:18px;font-weight:700;margin-bottom:8px">${r.txnAmt} disputed</div>
-      Your evidence for <span class="cbk-ref" style="background:rgba(255,255,255,.2);color:#fff">${r.id}</span> has been submitted. The card network is reviewing — this typically takes <strong>15–45 days</strong>. No intermediate updates; you'll be notified when there's a result.
+      <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--olive);margin-bottom:6px">⏳ Under review</div>
+      <div style="font-size:18px;font-weight:700;color:var(--olive);margin-bottom:8px">${r.txnAmt} disputed</div>
+      Your evidence for <span class="cbk-ref" style="background:rgba(74,82,32,.12);color:var(--olive)">${r.id}</span> has been submitted. The card network is reviewing — this typically takes <strong>15–45 days</strong>. No intermediate updates; you'll be notified when there's a result.
       <button class="bubble-action-btn solid" onclick="this.closest('.chat-bubble-row').style.opacity='.55';this.disabled=true; chatBotSubmitEvidence()">📎 Submit additional evidence</button>`;
     setTimeout(() => addBotBubble(firstBubbleHtml, 'action-waiting'), 300);
     setTimeout(() => addSuggestions([
