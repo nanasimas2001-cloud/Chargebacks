@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teya Business Portal — Sales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent:#C8E44A; --accent-text:#1a1f0a;
+    --olive:#4a5220; --olive-text:#d4e06e;
+    --bg:#f5f5f3; --surface:#fff;
+    --border:#e4e4e0; --border-light:#eeeeea;
+    --text:#1a1916; --text-2:#6b6a65; --text-3:#9c9a94;
+    --pill-ok-bg:#eaf3de; --pill-ok-text:#2a5c10;
+    --pill-err-bg:#fde8e8; --pill-err-text:#a32020;
+    --pill-warn-bg:#faeeda; --pill-warn-text:#854f0b;
+    --pill-blue-bg:#e6f1fb; --pill-blue-text:#0c447c;
+    --dot-visa:#1a56db; --dot-mc:#e34040; --dot-amex:#6b6a65;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+  /* topbar */
+  .topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px 0 12px;gap:10px;flex-shrink:0;z-index:10}
+  .t-logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--accent-text);flex-shrink:0}
+  .t-co{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;cursor:pointer}
+  .t-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .t-dl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);border:1px solid var(--border);border-radius:8px;padding:5px 11px;cursor:pointer;background:var(--surface)}
+  .t-dl:hover{background:var(--bg)}
+  .avatar{width:32px;height:32px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;cursor:pointer}
+
+  /* layout */
+  .body-wrap{display:flex;flex:1;overflow:hidden;position:relative}
+
+  /* main sidebar */
+  .sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:12px 8px;flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--text-2);cursor:pointer;transition:background .1s,color .1s;user-select:none}
+  .nav-item:hover{background:var(--bg);color:var(--text)}
+  .nav-item.active{background:var(--accent);color:var(--accent-text);font-weight:500}
+  .nav-divider{height:1px;background:var(--border-light);margin:6px 0}
+
+  /* sub-sidebar */
+  .sub-sidebar{width:180px;background:var(--surface);border-right:1px solid var(--border);padding:12px 8px;flex-shrink:0;overflow-y:auto}
+  .sub-label{font-size:14px;font-weight:600;padding:6px 10px 10px;color:var(--text)}
+  .sub-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--text-2);cursor:pointer;transition:background .1s;position:relative;user-select:none}
+  .sub-item:hover{background:var(--bg);color:var(--text)}
+  .sub-item.active{background:var(--accent);color:var(--accent-text);font-weight:500}
+  .sub-badge{margin-left:auto;background:#e34040;color:#fff;font-size:10px;font-weight:600;border-radius:99px;padding:0 5px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center}
+
+  /* main area */
+  .main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+  .screen.active{display:flex}
+
+  /* variant tabs */
+  .variant-tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;flex-shrink:0}
+  .vtab{padding:13px 14px 11px;font-size:12px;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s;white-space:nowrap}
+  .vtab:hover{color:var(--text-2)}
+  .vtab.active{background:var(--accent);color:var(--accent-text);border-radius:8px 8px 0 0;font-weight:500;border-bottom-color:transparent}
+
+  /* page header */
+  .page-header{background:var(--surface);padding:16px 20px 0;flex-shrink:0}
+  .page-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+
+  /* buttons */
+  .export-btn,.icon-btn{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text-2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;background:var(--surface);transition:background .1s;font-family:'DM Sans',sans-serif}
+  .export-btn:hover,.icon-btn:hover{background:var(--bg)}
+  .btn-primary{display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:7px 16px;border:none;border-radius:8px;background:var(--text);color:#fff;cursor:pointer;transition:opacity .15s}
+  .btn-primary:hover{opacity:.85}
+  .btn-ghost{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:7px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-2);cursor:pointer;transition:background .1s}
+  .btn-ghost:hover{background:var(--bg)}
+
+  /* filter bar */
+  .filter-bar{display:flex;align-items:center;gap:6px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:nowrap;overflow-x:auto;flex-shrink:0}
+  .filter-bar::-webkit-scrollbar{display:none}
+  .fpill{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:99px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;border:1px solid transparent;transition:all .15s;flex-shrink:0}
+  .fpill.date{background:var(--olive);color:var(--olive-text);border-color:var(--olive)}
+  .fpill.date:hover{opacity:.88}
+  .fpill.def{background:var(--surface);color:var(--text-2);border-color:var(--border)}
+  .fpill.def:hover{background:var(--bg);color:var(--text)}
+  .fpill.status-active{background:var(--olive);color:var(--olive-text);border-color:var(--olive)}
+  .f-spacer{flex:1;min-width:8px}
+  .search-wrap{display:flex;align-items:center;gap:7px;border:1px solid var(--border);border-radius:8px;padding:0 10px;height:32px;background:var(--surface);min-width:200px;flex-shrink:0}
+  .search-wrap input{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);background:transparent;width:100%}
+  .search-wrap input::placeholder{color:var(--text-3)}
+  .edit-cols-btn{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:500;background:var(--olive);color:var(--olive-text);cursor:pointer;border:none;flex-shrink:0;transition:opacity .15s;font-family:'DM Sans',sans-serif}
+  .edit-cols-btn:hover{opacity:.88}
+  .help-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-2);flex-shrink:0;font-size:13px;font-weight:500}
+  .help-btn:hover{background:var(--bg)}
+
+  /* summary bar */
+  .summary-bar{background:#f7fbee;border-bottom:1px solid #e8f0d0;padding:7px 20px;font-size:12px;color:var(--text-2);flex-shrink:0;display:flex;align-items:center;gap:16px}
+  .summary-bar strong{color:var(--text);font-weight:600}
+
+  /* stat cards */
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+  .stat-card{background:var(--bg);border-radius:10px;padding:12px 14px}
+  .stat-n{font-size:22px;font-weight:600;line-height:1}
+  .stat-n.blue{color:#0c447c}
+  .stat-n.red{color:#a32020}
+  .stat-n.green{color:#2a5c10}
+  .stat-l{font-size:11px;color:var(--text-2);margin-top:4px}
+
+  /* table */
+  .table-area{flex:1;overflow:auto;background:var(--surface)}
+  table{width:100%;border-collapse:collapse}
+  thead th{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;padding:10px 16px;text-align:left;background:var(--surface);border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;z-index:1;cursor:pointer;user-select:none}
+  thead th .th-inner{display:flex;align-items:center;gap:5px}
+  thead th:hover{color:var(--text-2)}
+  .drag-grip{color:var(--border);font-size:10px;letter-spacing:-2px}
+  tbody td{padding:11px 16px;border-bottom:1px solid var(--border-light);font-size:13px;color:var(--text);white-space:nowrap;vertical-align:middle}
+  tbody tr{cursor:pointer}
+  tbody tr:hover td{background:#fafaf8}
+  tbody tr:last-child td{border-bottom:none}
+
+  /* sticky last column — next action */
+  .cbk-table th:last-child,
+  .cbk-table td:last-child {
+    position: sticky;
+    right: 0;
+    background: var(--surface);
+    z-index: 2;
+    box-shadow: -4px 0 8px -2px rgba(0,0,0,.06);
+  }
+  .cbk-table thead th:last-child {
+    z-index: 3;
+  }
+  .cbk-table tbody tr:hover td:last-child {
+    background: #fafaf8;
+  }
+
+  /* pills */
+  .pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .pill.ok{background:var(--pill-ok-bg);color:var(--pill-ok-text)}
+  .pill.err{background:var(--pill-err-bg);color:var(--pill-err-text)}
+  .pill.warn{background:var(--pill-warn-bg);color:var(--pill-warn-text)}
+  .pill.blue{background:var(--pill-blue-bg);color:var(--pill-blue-text)}
+  .pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+  .pill.ok .pill-dot{background:var(--pill-ok-text)}
+  .pill.err .pill-dot{background:var(--pill-err-text)}
+  .pill.warn .pill-dot{background:var(--pill-warn-text)}
+  .pill.blue .pill-dot{background:var(--pill-blue-text)}
+
+  /* legacy status pill (transactions) */
+  .status-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:3px 9px;border-radius:99px}
+  .status-pill.approved{background:var(--pill-ok-bg);color:var(--pill-ok-text)}
+  .status-pill.declined,.status-pill.refunded,.status-pill.pending{background:var(--pill-err-bg);color:var(--pill-err-text)}
+  .status-pill.on-hold{background:var(--pill-warn-bg);color:var(--pill-warn-text)}
+  .status-check{font-size:12px}
+  .status-circle{width:12px;height:12px;border-radius:50%;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:8px}
+
+  /* card dot */
+  .card-cell{display:flex;align-items:center;gap:7px}
+  .card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .card-dot.visa{background:var(--dot-visa)}
+  .card-dot.mc{background:var(--dot-mc)}
+  .card-dot.amex{background:var(--dot-amex)}
+
+  /* type badge */
+  .type-badge{font-size:10px;color:var(--text-2);background:var(--bg);border-radius:4px;padding:2px 6px;border:1px solid var(--border-light);white-space:nowrap}
+
+  /* action dots */
+  .action-dots{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-3);transition:background .1s,color .1s}
+  .action-dots:hover{background:var(--bg);color:var(--text)}
+
+  /* mono */
+  .mono{font-family:monospace;font-size:11px;color:var(--text-2)}
+  .arn{font-family:monospace;font-size:11px;color:#0c447c}
+
+  /* pagination */
+  .pagination-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-top:1px solid var(--border-light);background:var(--surface);font-size:12px;color:var(--text-2);flex-shrink:0}
+  .pagination-bar select{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:3px 6px;background:var(--surface);cursor:pointer}
+  .pag-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-2);transition:background .1s}
+  .pag-btn:hover{background:var(--bg)}
+  .pag-btn:disabled{opacity:.4;cursor:default}
+
+  /* chargeback detail */
+  .det-scroll{flex:1;overflow-y:auto;background:var(--bg)}
+  .det-inner{padding:20px;display:flex;flex-direction:column;gap:14px}
+  .det-top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .det-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .det-card-title{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+  .det-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--border-light);gap:12px}
+  .det-row:last-child{border-bottom:none}
+  .det-label{font-size:11px;color:var(--text-2);flex-shrink:0}
+  .det-val{font-size:12px;color:var(--text);text-align:right}
+
+  /* timeline */
+  .tl-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .tl-title{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+  .tl{position:relative;padding-left:26px}
+  .tl::before{content:'';position:absolute;left:8px;top:10px;bottom:10px;width:1px;background:var(--border)}
+  .tl-item{position:relative;margin-bottom:18px}
+  .tl-item:last-child{margin-bottom:0}
+  .tl-dot{position:absolute;left:-22px;top:3px;width:16px;height:16px;border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .tl-dot.done{background:#1D9E75}
+  .tl-dot.active{background:#1a56db;box-shadow:0 0 0 3px rgba(26,86,219,.15)}
+  .tl-dot.pending{background:var(--border)}
+  .tl-dot.warn{background:#e34040}
+  .tl-date{font-size:10px;color:var(--text-3);margin-bottom:2px;font-family:monospace}
+  .tl-label{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+  .tl-sub{font-size:11px;color:var(--text-2);line-height:1.55}
+  .tl-amt{font-size:11px;font-weight:600;margin-top:3px}
+  .tl-amt.debit{color:#a32020}
+  .tl-amt.credit{color:#2a5c10}
+
+  /* countdown */
+  .countdown{display:flex;align-items:flex-start;gap:8px;background:#faeeda;border:1px solid #fac775;border-radius:8px;padding:9px 12px;margin-top:8px}
+  .countdown-text{font-size:11px;color:#633806;line-height:1.5}
+  .countdown-days{font-weight:600}
+
+  /* settlement link chip */
+  .sett-chip{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-top:8px;cursor:pointer;transition:border-color .15s}
+  .sett-chip:hover{border-color:var(--text-3)}
+  .sett-chip-label{font-size:11px;color:var(--text-2)}
+  .sett-chip-val{font-family:monospace;font-size:11px;color:#0c447c;font-weight:500}
+
+  /* detail action bar */
+  .det-action-bar{background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;display:flex;gap:8px;align-items:center;flex-shrink:0}
+  .det-action-note{margin-left:auto;font-size:11px;color:var(--text-3)}
+
+  /* modals */
+  .modal-overlay{display:none;position:absolute;inset:0;z-index:100}
+  .modal-overlay.open{display:block}
+  .modal-backdrop{position:absolute;inset:0}
+  .modal-box{position:absolute;top:148px;right:20px;width:340px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.09);overflow:hidden;z-index:101}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:600}
+  .modal-close{width:22px;height:22px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:14px;color:var(--text-2);display:flex;align-items:center;justify-content:center}
+  .modal-close:hover{background:var(--border)}
+  .modal-section{padding:10px 16px 4px}
+  .modal-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .modal-section-head span{font-size:12px;font-weight:600;color:var(--text)}
+  .modal-section-head a{font-size:11px;color:var(--text-3);cursor:pointer;text-decoration:underline}
+  .modal-section-head a:hover{color:var(--text-2)}
+  .col-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;padding-bottom:8px;border-bottom:1px solid var(--border-light);max-height:180px;overflow-y:auto}
+  .col-grid::-webkit-scrollbar,.adv-grid::-webkit-scrollbar{width:4px}
+  .col-grid::-webkit-scrollbar-thumb,.adv-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  .col-item{display:flex;align-items:center;gap:7px;padding:4px 2px;font-size:12px;color:var(--text-2);cursor:pointer;border-radius:4px;transition:background .1s}
+  .col-item:hover{background:var(--bg)}
+  .col-item input[type=checkbox]{accent-color:var(--olive);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+  .col-item.checked{color:var(--text)}
+  .modal-adv{padding:8px 16px 4px}
+  .modal-adv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .modal-adv-head span{font-size:12px;font-weight:600;color:var(--text)}
+  .modal-adv-head a{font-size:11px;color:var(--text-3);text-decoration:underline;cursor:pointer}
+  .adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;max-height:120px;overflow-y:auto;padding-bottom:6px}
+  .modal-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--border-light)}
+  .btn-cancel{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-2);cursor:pointer}
+  .btn-cancel:hover{background:var(--bg)}
+  .btn-apply{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border:none;border-radius:8px;background:var(--accent);color:var(--accent-text);cursor:pointer;transition:opacity .15s}
+  .btn-apply:hover{opacity:.88}
+
+  /* ctx menu */
+  .ctx-menu{display:none;position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.1);padding:4px;z-index:200;min-width:160px}
+  .ctx-menu.open{display:block}
+  .ctx-item{padding:7px 12px;font-size:12px;color:var(--text);cursor:pointer;border-radius:6px;transition:background .1s}
+  .ctx-item:hover{background:var(--bg)}
+  .ctx-item.danger{color:#a32020}
+  .ctx-divider{height:1px;background:var(--border-light);margin:3px 0}
+
+  /* ── Settlement deduction banner ── */
+  .sett-banner{background:#fffbf0;border:1px solid #f5d87a;border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:2px}
+  .sett-banner-icon{width:28px;height:28px;border-radius:50%;background:#faeeda;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .sett-banner-body{flex:1;min-width:0}
+  .sett-banner-title{font-size:12px;font-weight:600;color:#854f0b;margin-bottom:3px}
+  .sett-banner-text{font-size:11px;color:#6b4c18;line-height:1.55}
+  .sett-banner-link{font-size:11px;color:#854f0b;text-decoration:underline;cursor:pointer;margin-top:4px;display:inline-block}
+
+  /* ── Fee tooltip row ── */
+  .fee-info-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--bg);border:1px solid var(--border);color:var(--text-3);font-size:9px;font-weight:700;cursor:pointer;flex-shrink:0;transition:background .1s;vertical-align:middle;margin-left:4px;line-height:1}
+  .fee-info-btn:hover{background:var(--border)}
+  .fee-tooltip{display:none;position:absolute;z-index:300;background:var(--text);color:#fff;border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.55;max-width:240px;box-shadow:0 4px 16px rgba(0,0,0,.18);pointer-events:none}
+  .fee-tooltip.open{display:block}
+  .fee-tooltip::before{content:'';position:absolute;top:-5px;right:20px;width:10px;height:10px;background:var(--text);transform:rotate(45deg);border-radius:2px}
+  .fee-tooltip strong{color:var(--accent);font-weight:600}
+
+  /* ── Enhanced countdown ── */
+  .deadline-box{background:#faeeda;border:1px solid #fac775;border-radius:10px;padding:12px 14px;margin-top:8px}
+  .deadline-box.urgent{background:#fde8e8;border-color:#f5a5a5}
+  .deadline-box.safe{background:#eaf3de;border-color:#b5d98a}
+  .deadline-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .deadline-label{font-size:11px;font-weight:600;color:#854f0b}
+  .deadline-box.urgent .deadline-label{color:#a32020}
+  .deadline-box.safe .deadline-label{color:#2a5c10}
+  .deadline-date{font-family:monospace;font-size:11px;font-weight:600;color:#854f0b}
+  .deadline-box.urgent .deadline-date{color:#a32020}
+  .deadline-box.safe .deadline-date{color:#2a5c10}
+  .deadline-bar-wrap{background:rgba(0,0,0,.08);border-radius:99px;height:4px;width:100%;margin-bottom:7px;overflow:hidden}
+  .deadline-bar{height:4px;border-radius:99px;background:#e8a020;transition:width .4s}
+  .deadline-box.urgent .deadline-bar{background:#e34040}
+  .deadline-box.safe .deadline-bar{background:#4a8c20}
+  .deadline-sub{font-size:10px;color:#854f0b;opacity:.8;line-height:1.4}
+  .deadline-box.urgent .deadline-sub{color:#a32020}
+  .deadline-box.safe .deadline-sub{color:#2a5c10}
+
+  /* ── Action chip in list ── */
+  .action-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap;cursor:pointer;border:none;font-family:'DM Sans',sans-serif}
+  .action-chip.urgent{background:#fde8e8;color:#a32020;animation:pulse-red 2s infinite}
+  .action-chip.warn{background:#faeeda;color:#854f0b}
+  .action-chip.waiting{background:#e6f1fb;color:#0c447c}
+  .action-chip.done-won{background:var(--pill-ok-bg);color:var(--pill-ok-text)}
+  .action-chip.done-lost{background:var(--pill-err-bg);color:var(--pill-err-text)}
+  @keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.65}}
+
+  /* ── State-aware action bar ── */
+  .det-action-bar{background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;display:flex;gap:8px;align-items:center;flex-shrink:0}
+  .det-action-note{margin-left:auto;font-size:11px;color:var(--text-3)}
+  .action-banner{display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 20px 0;flex:1}
+  .action-banner.urgent{background:#fde8e8;border-color:#f5a5a5}
+  .action-banner.waiting{background:#e6f1fb;border-color:#b3d4f5}
+  .action-banner.won{background:var(--pill-ok-bg);border-color:#b5d98a}
+  .action-banner.lost{background:#fde8e8;border-color:#f5a5a5}
+  .action-banner-icon{font-size:16px;flex-shrink:0}
+  .action-banner-body{flex:1;min-width:0}
+  .action-banner-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:1px}
+  .action-banner.urgent .action-banner-title{color:#a32020}
+  .action-banner.waiting .action-banner-title{color:#0c447c}
+  .action-banner.won .action-banner-title{color:#2a5c10}
+  .action-banner.lost .action-banner-title{color:#a32020}
+  .action-banner-sub{font-size:11px;color:var(--text-2);line-height:1.4}
+
+  /* ── Master action drawer ── */
+  .ev-drawer-overlay{display:none;position:absolute;inset:0;z-index:400;background:rgba(0,0,0,.25)}
+  .ev-drawer-overlay.open{display:block}
+  .ev-drawer{position:absolute;right:0;top:0;bottom:0;width:440px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:-4px 0 24px rgba(0,0,0,.08)}
+  .ev-drawer-overlay.open .ev-drawer{transform:translateX(0)}
+  .ev-drawer-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .ev-drawer-title{font-size:14px;font-weight:600;color:var(--text)}
+  .ev-drawer-sub{font-size:11px;color:var(--text-2);margin-top:2px}
+  .ev-drawer-close{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:14px;color:var(--text-2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ev-drawer-close:hover{background:var(--border)}
+  .ev-drawer-body{flex:1;overflow-y:auto;padding:16px 18px}
+  .ev-drawer-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+
+  /* drawer content pieces */
+  .ev-section{margin-bottom:18px}
+  .ev-section-title{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .ev-step{display:flex;gap:10px;padding:10px 12px;background:var(--bg);border-radius:8px;margin-bottom:6px;align-items:flex-start}
+  .ev-step-num{width:20px;height:20px;border-radius:50%;background:var(--olive);color:var(--olive-text);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .ev-step-body{flex:1;min-width:0}
+  .ev-step-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px}
+  .ev-step-desc{font-size:11px;color:var(--text-2);line-height:1.5}
+  .ev-doc-list{list-style:none;padding:0;margin:0}
+  .ev-doc-item{display:flex;align-items:flex-start;gap:7px;padding:7px 10px;background:var(--bg);border-radius:7px;margin-bottom:5px;font-size:11px;color:var(--text-2);line-height:1.4}
+  .ev-doc-item::before{content:'📄';font-size:11px;flex-shrink:0;margin-top:1px}
+  .ev-doc-item.required::before{content:'⚠️'}
+  .ev-format-note{background:#e6f1fb;border:1px solid #b3d4f5;border-radius:8px;padding:9px 12px;font-size:11px;color:#0c447c;line-height:1.5;margin-bottom:12px}
+  .ev-deadline-note{background:#faeeda;border:1px solid #fac775;border-radius:8px;padding:9px 12px;font-size:11px;color:#854f0b;line-height:1.5;font-weight:500;margin-bottom:12px}
+  .ev-deadline-note.urgent{background:#fde8e8;border-color:#f5a5a5;color:#a32020}
+
+  /* upload zone */
+  .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:10px}
+  .upload-zone:hover,.upload-zone.drag{border-color:var(--olive);background:#f7fbee}
+  .upload-zone-icon{font-size:24px;margin-bottom:6px}
+  .upload-zone-text{font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:3px}
+  .upload-zone-sub{font-size:11px;color:var(--text-3)}
+  .upload-zone input{display:none}
+  .uploaded-files{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+  .uploaded-file{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg);border-radius:7px;border:1px solid var(--border)}
+  .uploaded-file-icon{font-size:14px;flex-shrink:0}
+  .uploaded-file-name{font-size:12px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .uploaded-file-size{font-size:11px;color:var(--text-3);flex-shrink:0}
+  .uploaded-file-remove{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;color:var(--text-3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .uploaded-file-remove:hover{background:#fde8e8;color:#a32020;border-color:#f5a5a5}
+  .file-error{font-size:11px;color:#a32020;background:#fde8e8;border:1px solid #f5a5a5;border-radius:7px;padding:7px 10px;margin-bottom:8px;display:none}
+  .file-error.show{display:block}
+
+  /* chat / Q&A panel */
+  .chat-triage{display:flex;flex-direction:column;gap:8px}
+  .triage-q{font-size:12px;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.5}
+  .triage-options{display:flex;flex-direction:column;gap:6px}
+  .triage-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .15s,background .15s;text-align:left;font-family:'DM Sans',sans-serif;width:100%}
+  .triage-opt:hover{border-color:var(--olive);background:#f7fbee}
+  .triage-opt-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .triage-opt-body{flex:1}
+  .triage-opt-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:1px}
+  .triage-opt-sub{font-size:11px;color:var(--text-2);line-height:1.4}
+  .chat-answer{background:var(--bg);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text);line-height:1.6;margin-bottom:10px}
+  .chat-answer strong{color:var(--text);font-weight:600}
+  .chat-back{font-size:11px;color:var(--text-3);cursor:pointer;text-decoration:underline;margin-bottom:14px;display:inline-block}
+  .chat-back:hover{color:var(--text-2)}
+  .chat-textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);background:var(--surface);resize:vertical;min-height:80px;outline:none;transition:border-color .15s}
+  .chat-textarea:focus{border-color:var(--olive)}
+  .chat-sent{text-align:center;padding:20px 0}
+  .chat-sent-icon{font-size:32px;margin-bottom:8px}
+  .chat-sent-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+  .chat-sent-sub{font-size:11px;color:var(--text-2);line-height:1.5}
+  .zendesk-ref{font-family:monospace;font-size:11px;color:#0c447c;background:#e6f1fb;border-radius:4px;padding:1px 5px}
+</style>
+</head>
+<body>
+
+<!-- topbar -->
+<div class="topbar">
+  <div class="t-logo">Y</div>
+  <div class="t-co">
+    Rafael Test Company
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 5.5L7 8.5L10 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="t-right">
+    <button class="t-dl">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="9" width="10" height="3" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M7 2V8M4.5 5.5L7 8L9.5 5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Download the app
+    </button>
+    <div class="avatar">MS</div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+  <!-- main nav -->
+  <div class="sidebar">
+    <div class="nav-item" onclick="setNav(this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="2" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="9" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+      Home
+    </div>
+    <div class="nav-item active" onclick="setNav(this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Sales
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h9M2 12h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Settlements
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-item" onclick="setNav(this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 6V4.5a3 3 0 016 0V6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Sell
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5.5v3l1.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Settings
+    </div>
+  </div>
+
+  <!-- sub-sidebar -->
+  <div class="sub-sidebar">
+    <div class="sub-label">Sales</div>
+    <div class="sub-item" onclick="showScreen('txn',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+      Overview
+    </div>
+    <div class="sub-item active" id="sub-txn" onclick="showScreen('txn',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M2 7h10M2 10.5h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Transactions
+      <span class="sub-badge">1</span>
+    </div>
+    <div class="sub-item" onclick="showScreen('pbl',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 7h4M7 5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="currentColor" stroke-width="1.2"/></svg>
+      Pay by link
+    </div>
+    <div class="sub-item" id="sub-cbk" onclick="showScreen('cbk-overview',this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2L2 5v4c0 2.5 2 4 5 5 3-1 5-2.5 5-5V5L7 2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Chargebacks
+      <span class="sub-badge">3</span>
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+
+    <!-- ═══ TRANSACTIONS SCREEN ═══ -->
+    <div class="screen active" id="screen-txn">
+      <div class="variant-tabs">
+        <div class="vtab" onclick="setTab(this)">Variant A: Inline Builder</div>
+        <div class="vtab" onclick="setTab(this)">Variant B: Classic + Modal</div>
+        <div class="vtab active" onclick="setTab(this)">Variant C: Classic + Edit Columns</div>
+      </div>
+      <div class="page-header">
+        <div class="page-title">Transactions
+          <button class="export-btn">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 9.5v2h10v-2M7 2v7M4.5 6.5L7 9l2.5-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Export
+          </button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <span class="fpill date"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M1 5h10M4 1v2M8 1v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Date: 09/01/2026 – 09/04/2026<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fpill def">Store<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fpill def">Source<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fpill def">Device<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fpill def">Status<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fpill def">Amount<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="f-spacer"></div>
+        <div class="search-wrap"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><input type="text" id="search-input" placeholder="Last 4 card digits" oninput="filterTable()"></div>
+        <button class="edit-cols-btn" onclick="toggleModal()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.5 3h9M1.5 6h6M1.5 9h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Edit columns</button>
+        <div class="help-btn">?</div>
+      </div>
+      <div class="summary-bar"><span><strong>EUR</strong> Sales: <strong>€2.08</strong> <span style="color:var(--text-3)">(10)</span></span><span style="color:var(--border)">|</span><span><strong>GBP</strong> Sales: <strong>£0.04</strong> <span style="color:var(--text-3)">(4)</span></span></div>
+      <div class="table-area"><table><thead><tr id="col-headers"></tr></thead><tbody id="txn-body"></tbody></table></div>
+      <div class="pagination-bar">Show up to <select id="page-size" onchange="renderTable()"><option value="7">7</option><option value="15" selected>15</option><option value="30">30</option></select> items
+        <button class="pag-btn" id="prev-btn" onclick="prevPage()" disabled><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2.5L4 6l3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="pag-btn" id="next-btn" onclick="nextPage()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6l-3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- ═══ PAY BY LINK PLACEHOLDER ═══ -->
+    <div class="screen" id="screen-pbl">
+      <div class="page-header"><div class="page-title">Pay by link</div></div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:13px">Pay by link — coming soon</div>
+    </div>
+
+    <!-- ═══ CHARGEBACKS OVERVIEW SCREEN ═══ -->
+    <div class="screen" id="screen-cbk-overview">
+      <div class="page-header">
+        <div class="page-title">Chargebacks
+          <button class="export-btn" onclick="cbkExport()">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 9.5v2h10v-2M7 2v7M4.5 6.5L7 9l2.5-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Export
+          </button>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-n blue">14</div><div class="stat-l">In progress</div></div>
+        <div class="stat-card"><div class="stat-n red">3</div><div class="stat-l">New — action needed</div></div>
+        <div class="stat-card"><div class="stat-n green">8</div><div class="stat-l">Won (last 90 days)</div></div>
+        <div class="stat-card"><div class="stat-n red">5</div><div class="stat-l">Lost (last 90 days)</div></div>
+      </div>
+      <div class="filter-bar">
+        <span class="fpill date"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M1 5h10M4 1v2M8 1v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Date: 01/01/2026 – 09/04/2026<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 4l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fpill def" id="cf-all" onclick="cbkFilter('all',this)">All</span>
+        <span class="fpill def" id="cf-new" onclick="cbkFilter('new',this)">New</span>
+        <span class="fpill def" id="cf-prog" onclick="cbkFilter('in_progress',this)">In progress</span>
+        <span class="fpill def" id="cf-won" onclick="cbkFilter('won',this)">Won</span>
+        <span class="fpill def" id="cf-lost" onclick="cbkFilter('lost',this)">Lost</span>
+        <div class="f-spacer"></div>
+        <div class="search-wrap"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M9.5 9.5L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><input type="text" id="cbk-search" placeholder="Search ARN, short ID, last 4…" oninput="renderCbkTable()"></div>
+      </div>
+      <div class="table-area">
+        <table class="cbk-table">
+          <thead>
+            <tr>
+              <th><div class="th-inner">Short ID</div></th>
+              <th><div class="th-inner">Store</div></th>
+              <th><div class="th-inner">Date</div></th>
+              <th><div class="th-inner">ARN</div></th>
+              <th><div class="th-inner">Type</div></th>
+              <th><div class="th-inner">Status</div></th>
+              <th><div class="th-inner">Card</div></th>
+              <th style="text-align:right"><div class="th-inner" style="justify-content:flex-end">Txn amount</div></th>
+              <th style="text-align:right"><div class="th-inner" style="justify-content:flex-end">CBK amount</div></th>
+              <th><div class="th-inner">Reason</div></th>
+              <th><div class="th-inner">Settlement</div></th>
+              <th><div class="th-inner">Next action</div></th>
+            </tr>
+          </thead>
+          <tbody id="cbk-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination-bar" style="justify-content:flex-start;gap:6px;padding:10px 20px">
+        <span style="color:var(--text-3);font-size:12px" id="cbk-count"></span>
+      </div>
+    </div>
+
+    <!-- ═══ CHARGEBACK DETAIL SCREEN ═══ -->
+    <div class="screen" id="screen-cbk-detail" style="position:relative">
+      <!-- detail topbar -->
+      <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:44px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <button class="icon-btn" style="padding:5px 10px;gap:5px" onclick="showScreen('cbk-overview', document.getElementById('sub-cbk'))">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Chargebacks
+        </button>
+        <span style="color:var(--border)">›</span>
+        <span class="mono" id="det-arn-crumb" style="color:var(--text-2)"></span>
+        <div style="margin-left:auto" id="det-status-badge"></div>
+      </div>
+      <div class="det-scroll">
+        <div class="det-inner">
+          <div class="det-top-grid">
+            <!-- left card -->
+            <div class="det-card">
+              <div class="det-card-title">Chargeback details</div>
+              <div class="det-row"><span class="det-label">ARN</span><span class="det-val arn" id="d-arn"></span></div>
+              <div class="det-row"><span class="det-label">Short ID</span><span class="det-val mono" id="d-sid"></span></div>
+              <div class="det-row"><span class="det-label">Type</span><span class="det-val" id="d-type"></span></div>
+              <div class="det-row"><span class="det-label">Reason</span><span class="det-val" id="d-reason"></span></div>
+              <div class="det-row"><span class="det-label">Reason code</span><span class="det-val mono" id="d-code"></span></div>
+              <div class="det-row"><span class="det-label">Card</span><span class="det-val" id="d-card"></span></div>
+              <div class="det-row"><span class="det-label">Last 4</span><span class="det-val mono" id="d-last4"></span></div>
+              <div class="det-row"><span class="det-label">Store</span><span class="det-val" id="d-store"></span></div>
+            </div>
+            <!-- right card -->
+            <div class="det-card" style="position:relative">
+              <div class="det-card-title">Financial impact</div>
+              <div class="det-row"><span class="det-label">Transaction amount</span><span class="det-val" id="d-txn-amt"></span></div>
+              <div class="det-row"><span class="det-label">Transaction currency</span><span class="det-val" id="d-txn-cur"></span></div>
+              <div class="det-row"><span class="det-label">Chargeback amount</span><span class="det-val" id="d-cbk-amt"></span></div>
+              <div class="det-row" style="position:relative">
+                <span class="det-label">
+                  Chargeback fee
+                  <button class="fee-info-btn" id="fee-info-btn" onclick="toggleFeeTooltip(event)">?</button>
+                </span>
+                <span class="det-val" id="d-fee"></span>
+                <div class="fee-tooltip" id="fee-tooltip">
+                  <strong>This fee is non-refundable.</strong><br>
+                  Teya is charged by Visa/Mastercard each time a dispute is raised — regardless of the outcome. This fee covers those network processing costs and applies even if you win the dispute.
+                </div>
+              </div>
+              <div class="det-card-title" style="margin-top:14px">Settlement</div>
+              <div class="det-row"><span class="det-label">Deducted from</span><span class="det-val" id="d-sett-deduct"></span></div>
+              <div id="d-sett-link"></div>
+            </div>
+          </div>
+
+          <!-- Settlement deduction explanation banner (shown for new/in_progress) -->
+          <div class="sett-banner" id="sett-explain-banner" style="display:none">
+            <div class="sett-banner-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#854f0b" stroke-width="1.2"/><path d="M7 4.5V7.5M7 9v.5" stroke="#854f0b" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="sett-banner-body">
+              <div class="sett-banner-title">Why was money taken from my settlement?</div>
+              <div class="sett-banner-text">A cardholder has filed a dispute for this transaction. The disputed amount has been temporarily held by the card network while this case is being resolved — this is required under Visa/Mastercard rules and applies to all acquirers. If you successfully dispute this chargeback, the funds will be returned in a future settlement.</div>
+              <span class="sett-banner-link" id="sett-banner-link-btn">View affected settlement →</span>
+            </div>
+          </div>
+
+          <!-- timeline -->
+          <div class="tl-card">
+            <div class="tl-title">Dispute lifecycle</div>
+            <div class="tl" id="tl-items"></div>
+          </div>
+        </div>
+      </div>
+      <div class="det-action-bar" id="det-action-bar">
+        <!-- filled dynamically by renderActionBar() -->
+      </div>
+
+      <!-- Evidence drawer overlay -->
+      <div class="ev-drawer-overlay" id="ev-drawer-overlay" onclick="closeEvidenceDrawer(event)">
+        <div class="ev-drawer" id="ev-drawer">
+          <div class="ev-drawer-header">
+            <div>
+              <div class="ev-drawer-title" id="ev-drawer-title">Submit evidence</div>
+              <div class="ev-drawer-sub" id="ev-drawer-sub">Responding to chargeback</div>
+            </div>
+            <button class="ev-drawer-close" onclick="closeEvidenceDrawerDirect()">✕</button>
+          </div>
+          <div class="ev-drawer-body" id="ev-drawer-body">
+            <!-- filled dynamically -->
+          </div>
+          <div class="ev-drawer-footer" id="ev-drawer-footer">
+            <!-- filled dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- edit columns modal -->
+  <div class="modal-overlay" id="col-modal">
+    <div class="modal-backdrop" onclick="closeModal()"></div>
+    <div class="modal-box">
+      <div class="modal-header">Edit columns <button class="modal-close" onclick="closeModal()">✕</button></div>
+      <div class="modal-section"><div class="modal-section-head"><span>Basic columns</span><a onclick="unselectAllBasic()">Unselect all</a></div><div class="col-grid" id="basic-cols"></div></div>
+      <div class="modal-adv"><div class="modal-adv-head"><span>Advanced columns</span><a onclick="selectAllAdv()">Select all</a></div><div class="adv-grid" id="adv-cols"></div></div>
+      <div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-apply" onclick="applyColumns()">Apply</button></div>
+    </div>
+  </div>
+
+  <!-- ctx menu -->
+  <div class="ctx-menu" id="ctx-menu">
+    <div class="ctx-item">View receipt</div>
+    <div class="ctx-item">Download receipt</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item">Refund full amount</div>
+    <div class="ctx-item">Partial refund</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item danger">Report issue</div>
+  </div>
+
+</div><!-- /body-wrap -->
+
+<script>
+/* ─── Transactions data ─── */
+const TXN_DATA = [
+  {date:'Mar 17, 2026',time:'14:36',store:'85 Camden Road',source:'Terminal',device:'13eeafb6',status:'approved',paymentType:'Debit',cardBrand:'Visa',last4:'1000',amount:'€5.50',currency:'EUR',netAmount:'€5.18',totalFees:'€0.32',settlementStatus:'Settled',arn:'74039200170001234511',authCode:'A77341',merchantRef:'PT249001',shortId:'SH001',id:'TXN-001'},
+  {date:'Mar 17, 2026',time:'11:22',store:'100 Victoria Street',source:'Terminal',device:'33b1f155',status:'approved',paymentType:'Credit',cardBrand:'Mastercard',last4:'1037',amount:'€12.00',currency:'EUR',netAmount:'€11.40',totalFees:'€0.60',settlementStatus:'Settled',arn:'74039200170001234512',authCode:'B44210',merchantRef:'PT249002',shortId:'SH002',id:'TXN-002'},
+  {date:'Mar 17, 2026',time:'09:58',store:'33 Oxford Street',source:'Terminal',device:'744f533e',status:'approved',paymentType:'Debit',cardBrand:'Amex',last4:'1074',amount:'€8.75',currency:'EUR',netAmount:'€8.31',totalFees:'€0.44',settlementStatus:'Settled',arn:'74039200170001234513',authCode:'C19833',merchantRef:'PT249003',shortId:'SH003',id:'TXN-003'},
+  {date:'Mar 17, 2026',time:'16:04',store:'12 Grafton Street',source:'Pay by Link',device:'—',status:'declined',paymentType:'Debit',cardBrand:'Visa',last4:'1111',amount:'€23.40',currency:'EUR',netAmount:'—',totalFees:'—',settlementStatus:'—',arn:'—',authCode:'—',merchantRef:'PT249004',shortId:'SH004',id:'TXN-004'},
+  {date:'Mar 17, 2026',time:'13:11',store:'7 Rue de Rivoli',source:'Terminal',device:'Asum22Ce',status:'refunded',paymentType:'Credit',cardBrand:'Visa',last4:'1148',amount:'€3.00',currency:'EUR',netAmount:'—',totalFees:'—',settlementStatus:'—',arn:'74039200170001234515',authCode:'—',merchantRef:'PT249005',shortId:'SH005',id:'TXN-005'},
+  {date:'Mar 17, 2026',time:'08:45',store:'85 Camden Road',source:'Terminal',device:'13eeafb6',status:'pending',paymentType:'Debit',cardBrand:'Mastercard',last4:'1185',amount:'€45.00',currency:'EUR',netAmount:'—',totalFees:'—',settlementStatus:'Pending',arn:'—',authCode:'—',merchantRef:'PT249006',shortId:'SH006',id:'TXN-006'},
+  {date:'Mar 17, 2026',time:'10:37',store:'100 Victoria Street',source:'Terminal',device:'33b1f155',status:'approved',paymentType:'Credit',cardBrand:'Amex',last4:'1222',amount:'€17.90',currency:'EUR',netAmount:'€16.85',totalFees:'€1.05',settlementStatus:'Settled',arn:'74039200170001234517',authCode:'D66120',merchantRef:'PT249007',shortId:'SH007',id:'TXN-007'},
+  {date:'Mar 16, 2026',time:'15:22',store:'33 Oxford Street',source:'App/Portal',device:'—',status:'approved',paymentType:'Debit',cardBrand:'Visa',last4:'2298',amount:'£42.00',currency:'GBP',netAmount:'£39.81',totalFees:'£2.19',settlementStatus:'Settled',arn:'74039200160001234518',authCode:'E55230',merchantRef:'PT249008',shortId:'SH008',id:'TXN-008'},
+  {date:'Mar 16, 2026',time:'12:08',store:'85 Camden Road',source:'Ecommerce',device:'—',status:'approved',paymentType:'Credit',cardBrand:'Mastercard',last4:'3391',amount:'£87.50',currency:'GBP',netAmount:'£82.80',totalFees:'£4.70',settlementStatus:'Settled',arn:'74039200160001234519',authCode:'F88440',merchantRef:'PT249009',shortId:'SH009',id:'TXN-009'},
+  {date:'Mar 16, 2026',time:'09:33',store:'12 Grafton Street',source:'Terminal',device:'744f533e',status:'approved',paymentType:'Debit',cardBrand:'Visa',last4:'4821',amount:'£128.00',currency:'GBP',netAmount:'£121.06',totalFees:'£6.94',settlementStatus:'Settled',arn:'74039200160001234520',authCode:'G77550',merchantRef:'PT249010',shortId:'SH010',id:'TXN-010'},
+];
+
+/* ─── Chargeback data ─── */
+const CBK_DATA = [
+  {id:'CBK-00114',store:'85 Camden Road',date:'2026-04-02',arn:'74039200260492847622',type:'Chargeback',status:'new',card:'Visa',last4:'4821',txnAmt:'£342.00',txnCur:'GBP',cbkAmt:'£342.00',fee:'£15.00',reason:'Item not received',code:'13.1',sett:'S-20260403',
+    tl:[
+      {date:'2026-03-18',label:'Transaction',sub:'Payment processed at store.',dot:'done',amt:null},
+      {date:'2026-04-02',label:'Chargeback raised',sub:'Card network notified Teya. Reason: item not received.',dot:'active',amt:'-£342.00',debit:true},
+      {date:null,label:'2nd presentment deadline',sub:'Submit evidence disputing this claim.',dot:'warn',countdown:'17 days remaining to respond',isDeadline:true},
+      {date:null,label:'Pre-arbitration',sub:'Pending',dot:'pending'},
+      {date:null,label:'Arbitration',sub:'Pending',dot:'pending'},
+    ]},
+  {id:'CBK-00112',store:'Old Street Branch',date:'2026-03-28',arn:'74039200240183927411',type:'Chargeback',status:'in_progress',card:'Mastercard',last4:'3391',txnAmt:'£87.50',txnCur:'GBP',cbkAmt:'£87.50',fee:'£15.00',reason:'Fraudulent transaction',code:'10.4',sett:'S-20260329',
+    tl:[
+      {date:'2026-03-12',label:'Transaction',sub:'Payment processed at store.',dot:'done'},
+      {date:'2026-03-28',label:'Chargeback raised',sub:'Card network notified Teya. Reason: fraud.',dot:'done',amt:'-£87.50',debit:true},
+      {date:'2026-04-05',label:'2nd presentment submitted',sub:'Evidence uploaded: proof of delivery + signed receipt.',dot:'done'},
+      {date:null,label:'Pre-arbitration',sub:'Awaiting card network response. Typically 15–45 days.',dot:'active',countdown:'Awaiting issuer — up to 30 days'},
+      {date:null,label:'Arbitration',sub:'Pending',dot:'pending'},
+    ]},
+  {id:'CBK-00109',store:'85 Camden Road',date:'2026-03-10',arn:'74039200210384756102',type:'Retrieval request',status:'won',card:'Visa',last4:'7712',txnAmt:'£215.00',txnCur:'GBP',cbkAmt:'£215.00',fee:'£0.00',reason:'Retrieval request',code:'—',sett:'S-20260315',
+    tl:[
+      {date:'2026-02-28',label:'Transaction',sub:'Payment processed at store.',dot:'done'},
+      {date:'2026-03-10',label:'Retrieval request received',sub:'Issuer requested transaction documentation.',dot:'done'},
+      {date:'2026-03-14',label:'Documentation submitted',sub:'Transaction receipt and cardholder signature provided.',dot:'done'},
+      {date:'2026-03-22',label:'Retrieval fulfilled — case closed',sub:'Issuer accepted documentation. No chargeback escalated.',dot:'done',amt:'+£215.00 — no deduction',credit:true},
+    ]},
+  {id:'CBK-00107',store:'Shoreditch Hub',date:'2026-02-19',arn:'74039200190283647211',type:'Chargeback',status:'lost',card:'Amex',last4:'0042',txnAmt:'£540.00',txnCur:'GBP',cbkAmt:'£540.00',fee:'£25.00',reason:'Services not provided',code:'C08',sett:'S-20260220',
+    tl:[
+      {date:'2026-02-04',label:'Transaction',sub:'Payment processed at store.',dot:'done'},
+      {date:'2026-02-19',label:'Chargeback raised',sub:'Card network notified Teya.',dot:'done',amt:'-£540.00',debit:true},
+      {date:'2026-02-26',label:'2nd presentment submitted',sub:'Evidence submitted.',dot:'done'},
+      {date:'2026-03-18',label:'Pre-arbitration — lost',sub:'Issuer upheld chargeback.',dot:'warn',amt:'-£25.00 chargeback fee',debit:true},
+    ]},
+  {id:'CBK-00105',store:'Old Street Branch',date:'2026-02-12',arn:'74039200120847362910',type:'Representment',status:'in_progress',card:'Visa',last4:'2290',txnAmt:'£128.00',txnCur:'GBP',cbkAmt:'£128.00',fee:'£15.00',reason:'Not as described',code:'13.3',sett:'S-20260214',
+    tl:[
+      {date:'2026-01-30',label:'Transaction',sub:'Payment processed.',dot:'done'},
+      {date:'2026-02-12',label:'Chargeback raised',sub:'Reason: not as described.',dot:'done',amt:'-£128.00',debit:true},
+      {date:'2026-02-19',label:'Representment filed',sub:'Evidence submitted to network.',dot:'done'},
+      {date:null,label:'Awaiting arbitration decision',sub:'Final decision pending from card network.',dot:'active',countdown:'Decision expected by 2026-05-01'},
+      {date:null,label:'Arbitration',sub:'Pending final ruling.',dot:'pending'},
+    ]},
+  {id:'CBK-00103',store:'85 Camden Road',date:'2026-01-28',arn:'74039200280193847210',type:'Chargeback',status:'new',card:'Mastercard',last4:'9944',txnAmt:'£76.00',txnCur:'GBP',cbkAmt:'£76.00',fee:'£15.00',reason:'Duplicate processing',code:'12.6',sett:'S-20260129',
+    tl:[
+      {date:'2026-01-20',label:'Transaction',sub:'Payment processed.',dot:'done'},
+      {date:'2026-01-28',label:'Chargeback raised',sub:'Reason: duplicate processing.',dot:'active',amt:'-£76.00',debit:true},
+      {date:null,label:'2nd presentment deadline',sub:'Submit evidence.',dot:'warn',countdown:'4 days remaining to respond',isDeadline:true},
+      {date:null,label:'Pre-arbitration',sub:'Pending.',dot:'pending'},
+      {date:null,label:'Arbitration',sub:'Pending.',dot:'pending'},
+    ]},
+];
+
+/* ─── CBK status pill ─── */
+function cbkPill(s) {
+  const m = {new:['blue','New'],in_progress:['warn','In progress'],won:['ok','Won'],lost:['err','Lost']};
+  const [cls,label] = m[s]||['blue',s];
+  return `<span class="pill ${cls}"><span class="pill-dot"></span>${label}</span>`;
+}
+
+/* ─── CBK filter state ─── */
+let cbkFilter_val = 'all';
+function cbkFilter(val, el) {
+  cbkFilter_val = val;
+  document.querySelectorAll('#screen-cbk-overview .fpill.def, #screen-cbk-overview .fpill.status-active').forEach(p => {
+    p.classList.remove('status-active');
+    if (!p.classList.contains('date')) p.className = 'fpill def';
+  });
+  if (el && val !== 'all') { el.className = 'fpill status-active'; }
+  renderCbkTable();
+}
+
+function renderCbkTable() {
+  const q = (document.getElementById('cbk-search')?.value||'').toLowerCase();
+  let rows = CBK_DATA.filter(r => {
+    const mf = cbkFilter_val === 'all' || r.status === cbkFilter_val;
+    const ms = !q || r.arn.includes(q) || r.id.toLowerCase().includes(q) || r.last4.includes(q) || r.store.toLowerCase().includes(q);
+    return mf && ms;
+  });
+  const dotCls = {Visa:'visa',Mastercard:'mc',Amex:'amex'};
+  document.getElementById('cbk-body').innerHTML = rows.map(r => `
+    <tr onclick="openCbkDetail('${r.id}')">
+      <td class="mono">${r.id}</td>
+      <td>${r.store}</td>
+      <td class="mono" style="font-size:12px">${r.date}</td>
+      <td><span class="arn">${r.arn.slice(0,8)}…${r.arn.slice(-4)}</span></td>
+      <td><span class="type-badge">${r.type}</span></td>
+      <td>${cbkPill(r.status)}</td>
+      <td><div class="card-cell"><span class="card-dot ${dotCls[r.card]||'amex'}"></span>${r.card} ··${r.last4}</div></td>
+      <td style="text-align:right"><strong>${r.txnAmt}</strong></td>
+      <td style="text-align:right">${r.cbkAmt}</td>
+      <td style="color:var(--text-2);font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis">${r.reason}</td>
+      <td class="mono">${r.sett}</td>
+      <td onclick="event.stopPropagation()">${listActionChip(r)}</td>
+    </tr>`).join('');
+  document.getElementById('cbk-count').textContent = `${rows.length} chargebacks`;
+}
+
+function listActionChip(r) {
+  const deadline = r.tl.find(e => e.isDeadline && e.countdown);
+  if (r.status === 'new') {
+    const days = deadline ? (deadline.countdown.match(/(\d+)\s*days/)||[])[1] : null;
+    const cls = days && parseInt(days) <= 5 ? 'urgent' : 'warn';
+    const label = days ? `Respond · ${days}d left` : 'Action required';
+    return `<button class="action-chip ${cls}" onclick="openCbkDetail('${r.id}');setTimeout(()=>openActionDrawer('dispute'),150)">${cls==='urgent'?'🚨':''} ${label}</button>`;
+  }
+  if (r.status === 'in_progress') return `<button class="action-chip waiting" onclick="openCbkDetail('${r.id}');setTimeout(()=>openActionDrawer('status'),150)">⏳ Awaiting decision</button>`;
+  if (r.status === 'won') return `<span class="action-chip done-won">✓ Won</span>`;
+  if (r.status === 'lost') return `<span class="action-chip done-lost">✗ Lost</span>`;
+  return '';
+}
+
+function openCbkDetail(id) {
+  const r = CBK_DATA.find(d => d.id === id);
+  const dotCls = {Visa:'visa',Mastercard:'mc',Amex:'amex'};
+  document.getElementById('det-arn-crumb').textContent = r.arn;
+  document.getElementById('det-status-badge').innerHTML = cbkPill(r.status);
+  document.getElementById('d-arn').textContent = r.arn;
+  document.getElementById('d-sid').textContent = r.id;
+  document.getElementById('d-type').innerHTML = `<span class="type-badge">${r.type}</span>`;
+  document.getElementById('d-reason').textContent = r.reason;
+  document.getElementById('d-code').textContent = r.code;
+  document.getElementById('d-card').innerHTML = `<div class="card-cell"><span class="card-dot ${dotCls[r.card]||'amex'}"></span>${r.card}</div>`;
+  document.getElementById('d-last4').textContent = '···· ' + r.last4;
+  document.getElementById('d-store').textContent = r.store;
+  document.getElementById('d-txn-amt').textContent = r.txnAmt;
+  document.getElementById('d-txn-cur').textContent = r.txnCur;
+  document.getElementById('d-cbk-amt').textContent = r.cbkAmt;
+  document.getElementById('d-fee').textContent = r.fee;
+  document.getElementById('d-sett-deduct').textContent = 'Settlement #' + r.sett;
+  document.getElementById('d-sett-link').innerHTML = `<div class="sett-chip"><span class="sett-chip-label">View settlement report</span><span class="sett-chip-val">${r.sett}</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6l-3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+
+  // Settlement banner
+  const banner = document.getElementById('sett-explain-banner');
+  banner.style.display = (r.status === 'new' || r.status === 'in_progress') ? 'flex' : 'none';
+  document.getElementById('sett-banner-link-btn').textContent = `View Settlement ${r.sett} →`;
+
+  window._currentCbk = r;
+
+  // Timeline
+  document.getElementById('tl-items').innerHTML = r.tl.map(ev => {
+    const amtHtml = ev.amt ? `<div class="tl-amt ${ev.credit?'credit':'debit'}">${ev.amt}</div>` : '';
+    let deadlineHtml = '';
+    if (ev.countdown) {
+      const daysMatch = ev.countdown.match(/(\d+)\s*days/);
+      const days = daysMatch ? parseInt(daysMatch[1]) : null;
+      const isWaiting = ev.countdown.toLowerCase().includes('awaiting') || ev.countdown.toLowerCase().includes('decision');
+      if (isWaiting) {
+        deadlineHtml = `<div class="deadline-box safe" style="margin-top:8px"><div class="deadline-top"><span class="deadline-label">⏳ Awaiting response</span></div><div class="deadline-sub">${ev.countdown}</div></div>`;
+      } else if (days !== null) {
+        const urgency = days <= 5 ? 'urgent' : days <= 10 ? '' : 'safe';
+        const pct = Math.min(100, Math.round((1 - days/20)*100));
+        const dueDate = new Date(); dueDate.setDate(dueDate.getDate() + days);
+        const dueFmt = dueDate.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+        const urgencyLabel = days <= 5 ? '🚨 Urgent — respond now' : days <= 10 ? '⚠️ Response deadline approaching' : '✓ Time remaining to respond';
+        deadlineHtml = `<div class="deadline-box ${urgency}" style="margin-top:8px"><div class="deadline-top"><span class="deadline-label">${urgencyLabel}</span><span class="deadline-date">Due ${dueFmt}</span></div><div class="deadline-bar-wrap"><div class="deadline-bar" style="width:${pct}%"></div></div><div class="deadline-sub">You have <strong>${days} days</strong> to submit your evidence. After this deadline Teya cannot dispute on your behalf.</div></div>`;
+      }
+    }
+    return `<div class="tl-item"><div class="tl-dot ${ev.dot}"></div>${ev.date?`<div class="tl-date">${ev.date}</div>`:''}<div class="tl-label">${ev.label}</div><div class="tl-sub">${ev.sub}</div>${amtHtml}${deadlineHtml}</div>`;
+  }).join('');
+
+  renderActionBar(r);
+  showScreen('cbk-detail', document.getElementById('sub-cbk'));
+}
+
+/* ── State-aware action bar ── */
+function renderActionBar(r) {
+  const bar = document.getElementById('det-action-bar');
+  const deadline = r.tl.find(e => e.isDeadline && e.countdown);
+  const days = deadline ? ((deadline.countdown.match(/(\d+)\s*days/)||[])[1]) : null;
+
+  const configs = {
+    new: {
+      cls: days && parseInt(days)<=5 ? 'urgent' : '',
+      icon: days && parseInt(days)<=5 ? '🚨' : '⚠️',
+      title: days ? `You have ${days} days to respond` : 'Action required',
+      sub: 'Submit your evidence now to dispute this chargeback. Missing the deadline means we cannot contest it.',
+      primaryLabel: 'Submit evidence',
+      primaryAction: "openActionDrawer('dispute')",
+      secondaryLabel: 'I have a question',
+      secondaryAction: "openActionDrawer('question')"
+    },
+    in_progress: {
+      cls: 'waiting',
+      icon: '⏳',
+      title: 'Waiting for card network decision',
+      sub: 'Your evidence has been submitted. The issuing bank is reviewing the case — this typically takes 15–45 days.',
+      primaryLabel: 'Check status / ask a question',
+      primaryAction: "openActionDrawer('status')",
+      secondaryLabel: 'Submit additional evidence',
+      secondaryAction: "openActionDrawer('dispute')"
+    },
+    won: {
+      cls: 'won',
+      icon: '✅',
+      title: 'Chargeback won — funds returned',
+      sub: 'This case is closed in your favour. The disputed amount will appear in your next settlement.',
+      primaryLabel: null,
+      secondaryLabel: 'I have a question about this',
+      secondaryAction: "openActionDrawer('question')"
+    },
+    lost: {
+      cls: 'lost',
+      icon: '❌',
+      title: 'Chargeback lost — amount debited',
+      sub: 'The card network ruled in the cardholder\'s favour. The disputed amount has been deducted from your settlement.',
+      primaryLabel: null,
+      secondaryLabel: 'I have a question about this outcome',
+      secondaryAction: "openActionDrawer('question')"
+    }
+  };
+  const c = configs[r.status] || configs.in_progress;
+  bar.innerHTML = `
+    <div class="action-banner ${c.cls}">
+      <div class="action-banner-icon">${c.icon}</div>
+      <div class="action-banner-body">
+        <div class="action-banner-title">${c.title}</div>
+        <div class="action-banner-sub">${c.sub}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      ${c.primaryLabel ? `<button class="btn-primary" onclick="${c.primaryAction}">${c.primaryLabel}</button>` : ''}
+      <button class="btn-ghost" onclick="${c.secondaryAction}">${c.secondaryLabel}</button>
+    </div>`;
+}
+
+/* ── Fee tooltip ── */
+function toggleFeeTooltip(e) {
+  e.stopPropagation();
+  const tt = document.getElementById('fee-tooltip');
+  const btn = document.getElementById('fee-info-btn');
+  const card = btn.closest('.det-card');
+  const cardRect = card.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+  tt.style.top = (btnRect.bottom - cardRect.top + 6) + 'px';
+  tt.style.right = '0px';
+  tt.classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  const tt = document.getElementById('fee-tooltip');
+  if (tt) tt.classList.remove('open');
+});
+
+/* ── Action drawer ── */
+const EVIDENCE_GUIDANCE = {
+  '13.1':{title:'Item not received',steps:[{title:'Prove delivery',desc:'Provide signed proof of delivery, courier GPS records, or a photo at the delivery address.'},{title:'Show cardholder acknowledged receipt',desc:'Any email or message where the cardholder confirms they received the goods.'},{title:'Include your invoice',desc:'Copy of the original order showing what was purchased and the shipping address.'}],docs:[{text:'Signed proof of delivery (required)',req:true},{text:'Courier tracking with GPS confirmation',req:true},{text:'Invoice / order confirmation',req:false},{text:'Cardholder communication confirming receipt',req:false}]},
+  '10.4':{title:'Fraudulent transaction',steps:[{title:'Authenticate the cardholder',desc:'Without 3D Secure liability shift this is hard to dispute. You need signed documents or authenticated records proving the cardholder made the purchase.'},{title:'Transaction authentication evidence',desc:'Card-present: signed receipt. Online: device ID, IP address, cardholder account evidence.'},{title:'Prior non-disputed payments',desc:'Demonstrates an established relationship with this cardholder.'}],docs:[{text:'Signed transaction receipt or invoice (required)',req:true},{text:'Record of previous non-disputed transactions',req:false},{text:'Device ID and IP address at time of transaction (online)',req:false},{text:'Cardholder account/profile evidence (if applicable)',req:false}]},
+  '12.6':{title:'Duplicate processing',steps:[{title:'Show two separate orders',desc:'Invoices proving these were two distinct purchases — not the same transaction processed twice.'},{title:'Confirm no double charge',desc:'Documentation showing only one payment method was used per order.'}],docs:[{text:'Invoice for each transaction (required)',req:true},{text:'Proof only one payment method was used per order',req:true},{text:'Order details showing distinct items/services',req:false}]},
+  '13.3':{title:'Not as described',steps:[{title:'Prove item matched description',desc:'Product photos, listing screenshots, or other evidence that goods/services were as advertised.'},{title:'Show cardholder never contacted you',desc:'Communications history (or absence thereof) demonstrating the cardholder did not attempt to resolve this.'},{title:'Include signed documents',desc:'Signed delivery receipts or service agreements confirming the cardholder accepted what was provided.'}],docs:[{text:'Product listing / description at time of sale (required)',req:true},{text:'Photos or evidence goods matched description',req:true},{text:'Cardholder communications or absence thereof',req:false},{text:'Signed receipt or service agreement',req:false}]},
+  'C08':{title:'Services not provided',steps:[{title:'Prove service was delivered',desc:'Confirmation emails, sign-in logs, or authenticated records showing the cardholder used or received the service.'},{title:'Include your cancellation policy',desc:'Show the policy was clearly disclosed before the transaction and the cardholder agreed to it.'},{title:'Document cardholder communication',desc:'Any post-transaction contact confirming service delivery.'}],docs:[{text:'Proof of service delivery (required)',req:true},{text:'Cancellation policy disclosed at checkout',req:true},{text:'Cardholder confirmation email / communication',req:false},{text:'Copy of invoice / booking confirmation',req:false}]},
+};
+const EVIDENCE_DEFAULT = {title:'Consumer dispute',steps:[{title:'Gather relevant documentation',desc:'Collect invoices, receipts, emails, or signed documents related to this transaction.'},{title:'Address the specific reason',desc:'Focus your evidence on disproving the cardholder\'s specific claim (shown as the chargeback reason).'},{title:'Translate non-English documents',desc:'All evidence must be in English or accompanied by an English translation.'}],docs:[{text:'Invoice or receipt for the transaction',req:false},{text:'Any cardholder communications',req:false},{text:'Signed documents (delivery receipt, contract)',req:false}]};
+
+const FAQ_ANSWERS = {
+  'settlement': `<strong>Why was money taken from my settlement?</strong><br><br>When a cardholder files a chargeback, the disputed amount is temporarily held by the card network (Visa/Mastercard) while the case is reviewed. This is a mandatory industry requirement — Teya cannot prevent this deduction.<br><br>If you successfully dispute the chargeback, the funds will be returned in a future settlement. The chargeback fee (shown in the financial details) covers network processing costs and is not refunded regardless of outcome.`,
+  'timeframe': `<strong>How long will this take?</strong><br><br>Once evidence is submitted, it typically takes <strong>30–90 days</strong> to receive a final decision. More specifically:<ul style="margin:8px 0 0 16px;font-size:11px;line-height:1.8"><li>After first submission: up to ~45 days for an initial decision</li><li>If it goes to pre-arbitration or arbitration: up to ~3 months total</li></ul>You won't receive intermediate updates during this period — we'll notify you when there's a final result.`,
+  'process': `<strong>How does the chargeback process work?</strong><br><br>A chargeback flows like this: cardholder → their bank → card network → Teya → you. <br><br>You have the right to dispute it by providing evidence. Teya submits that evidence to the card network, who pass it to the issuing bank. The bank then decides whether to uphold or reverse the chargeback. If you disagree with a lost decision, there is one further stage (arbitration) where the card scheme makes a final, binding ruling.`,
+  'fee': `<strong>Why am I being charged a fee even if I win?</strong><br><br>The chargeback fee covers Teya's cost of receiving and processing the dispute from the card network. This cost is incurred regardless of the outcome — even if you win. The fee is non-refundable. <br><br>If you believe the chargeback resulted from a fault with Teya's equipment, please use the "I have a question" option below and describe the situation — your account manager may be able to review it.`,
+};
+
+let _drawerUploadedFiles = [];
+
+function openActionDrawer(mode) {
+  const r = window._currentCbk;
+  if (!r) return;
+  _drawerUploadedFiles = [];
+
+  const deadline = r.tl.find(e => e.isDeadline && e.countdown);
+  const days = deadline ? ((deadline.countdown.match(/(\d+)\s*days/)||[])[1]) : null;
+  const dueDate = days ? (() => { const d=new Date(); d.setDate(d.getDate()+parseInt(days)); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); })() : null;
+
+  document.getElementById('ev-drawer-sub').textContent = `${r.id} · ${r.reason}`;
+
+  if (mode === 'dispute') {
+    const guide = EVIDENCE_GUIDANCE[r.code] || EVIDENCE_DEFAULT;
+    document.getElementById('ev-drawer-title').textContent = 'Submit evidence';
+    let deadlineCopy = '';
+    if (days) {
+      const urgCls = parseInt(days)<=5 ? 'urgent' : '';
+      deadlineCopy = `<div class="ev-deadline-note ${urgCls}">⏰ Deadline: <strong>${dueDate}</strong> (${days} days remaining). Evidence submitted after this date cannot be accepted.</div>`;
+    }
+    document.getElementById('ev-drawer-body').innerHTML = `
+      <div class="ev-format-note">📎 Accepted formats: <strong>PDF and JPG/JPEG only.</strong> Links to cloud drives or websites will not be accepted for security reasons.</div>
+      ${deadlineCopy}
+      <div class="ev-section">
+        <div class="ev-section-title">What to prove: ${guide.title}</div>
+        ${guide.steps.map((s,i)=>`<div class="ev-step"><div class="ev-step-num">${i+1}</div><div class="ev-step-body"><div class="ev-step-title">${s.title}</div><div class="ev-step-desc">${s.desc}</div></div></div>`).join('')}
+      </div>
+      <div class="ev-section">
+        <div class="ev-section-title">Recommended documents</div>
+        <ul class="ev-doc-list">${guide.docs.map(d=>`<li class="ev-doc-item ${d.req?'required':''}">${d.text}</li>`).join('')}</ul>
+      </div>
+      <div class="ev-section">
+        <div class="ev-section-title">Upload your files</div>
+        <div class="file-error" id="file-error">Only PDF and JPG/JPEG files are accepted. Please remove unsupported files.</div>
+        <div class="uploaded-files" id="uploaded-files"></div>
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+          <div class="upload-zone-icon">📂</div>
+          <div class="upload-zone-text">Click to upload or drag files here</div>
+          <div class="upload-zone-sub">PDF or JPG only · Max 10 MB per file</div>
+          <input type="file" id="file-input" multiple accept=".pdf,.jpg,.jpeg" onchange="handleFileSelect(this.files)">
+        </div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:6px">Non-English documents must include an English translation.</div>
+      </div>`;
+    document.getElementById('ev-drawer-footer').innerHTML = `
+      <button class="btn-primary" style="flex:1" id="submit-ev-btn" onclick="submitEvidence()" disabled>Submit evidence</button>
+      <button class="btn-ghost" onclick="closeEvidenceDrawerDirect()">Cancel</button>`;
+
+  } else if (mode === 'status') {
+    document.getElementById('ev-drawer-title').textContent = 'Case status';
+    const statusCopy = {
+      new: `<div class="chat-answer">Your case is <strong>waiting for your response.</strong> A chargeback has been filed and you need to submit evidence to dispute it. Use the "Submit evidence" button to act before the deadline.</div>`,
+      in_progress: `<div class="chat-answer">Your evidence has been submitted and the case is <strong>under review by the card network.</strong> The issuing bank is evaluating the dispute. This typically takes <strong>15–45 days</strong> — you will be notified when there is a result. There are no intermediate updates during this stage.</div>`,
+      won: `<div class="chat-answer">This chargeback was <strong>won ✅</strong> — the card network ruled in your favour. The disputed funds will be returned in your next settlement.</div>`,
+      lost: `<div class="chat-answer">This chargeback was <strong>lost ❌</strong> — the card network upheld the cardholder's claim. The disputed amount has been deducted from your settlement. If you have further questions about the outcome, use the option below.</div>`,
+    };
+    document.getElementById('ev-drawer-body').innerHTML = `
+      ${statusCopy[r.status] || ''}
+      <div class="chat-triage" style="margin-top:16px">
+        <div class="triage-q">Do you have another question?</div>
+        <div class="triage-options">
+          <button class="triage-opt" onclick="showFaqAnswer('settlement')"><div class="triage-opt-icon">💳</div><div class="triage-opt-body"><div class="triage-opt-title">Why was money taken from my settlement?</div></div></button>
+          <button class="triage-opt" onclick="showFaqAnswer('timeframe')"><div class="triage-opt-icon">⏱</div><div class="triage-opt-body"><div class="triage-opt-title">How long will this take?</div></div></button>
+          <button class="triage-opt" onclick="showFaqAnswer('fee')"><div class="triage-opt-icon">🧾</div><div class="triage-opt-body"><div class="triage-opt-title">Why am I being charged a fee?</div></div></button>
+          <button class="triage-opt" onclick="openActionDrawer('question')"><div class="triage-opt-icon">💬</div><div class="triage-opt-body"><div class="triage-opt-title">I have a different question</div><div class="triage-opt-sub">Send a message to our support team</div></button>
+        </div>
+      </div>`;
+    document.getElementById('ev-drawer-footer').innerHTML = `<button class="btn-ghost" style="flex:1" onclick="closeEvidenceDrawerDirect()">Close</button>`;
+
+  } else if (mode === 'question') {
+    document.getElementById('ev-drawer-title').textContent = 'Contact support';
+    document.getElementById('ev-drawer-body').innerHTML = `
+      <div class="chat-triage">
+        <div class="triage-q">What's your question about?</div>
+        <div class="triage-options">
+          <button class="triage-opt" onclick="showFaqAnswer('settlement')"><div class="triage-opt-icon">💳</div><div class="triage-opt-body"><div class="triage-opt-title">Why was money taken from my settlement?</div></div></button>
+          <button class="triage-opt" onclick="showFaqAnswer('fee')"><div class="triage-opt-icon">🧾</div><div class="triage-opt-body"><div class="triage-opt-title">Why am I being charged a chargeback fee?</div></div></button>
+          <button class="triage-opt" onclick="showFaqAnswer('timeframe')"><div class="triage-opt-icon">⏱</div><div class="triage-opt-body"><div class="triage-opt-title">How long does this process take?</div></div></button>
+          <button class="triage-opt" onclick="showFaqAnswer('process')"><div class="triage-opt-icon">🔄</div><div class="triage-opt-body"><div class="triage-opt-title">How does the chargeback process work?</div></div></button>
+          <button class="triage-opt" onclick="showContactForm()"><div class="triage-opt-icon">✍️</div><div class="triage-opt-body"><div class="triage-opt-title">Something else</div><div class="triage-opt-sub">Send a message directly to our support team</div></div></button>
+        </div>
+      </div>`;
+    document.getElementById('ev-drawer-footer').innerHTML = `<button class="btn-ghost" style="flex:1" onclick="closeEvidenceDrawerDirect()">Close</button>`;
+  }
+
+  document.getElementById('ev-drawer-overlay').classList.add('open');
+}
+
+function showFaqAnswer(key) {
+  const r = window._currentCbk;
+  const body = document.getElementById('ev-drawer-body');
+  body.innerHTML = `
+    <span class="chat-back" onclick="openActionDrawer('question')">← Back to questions</span>
+    <div class="chat-answer">${FAQ_ANSWERS[key]}</div>
+    <div class="triage-options" style="margin-top:8px">
+      <button class="triage-opt" onclick="showContactForm()"><div class="triage-opt-icon">✍️</div><div class="triage-opt-body"><div class="triage-opt-title">This didn't answer my question</div><div class="triage-opt-sub">Send a message to our support team</div></div></button>
+    </div>`;
+}
+
+function showContactForm() {
+  const r = window._currentCbk;
+  const body = document.getElementById('ev-drawer-body');
+  body.innerHTML = `
+    <span class="chat-back" onclick="openActionDrawer('question')">← Back</span>
+    <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:8px">Send a message to support</div>
+    <div style="font-size:11px;color:var(--text-2);margin-bottom:12px;line-height:1.5">Your message will be linked to chargeback <span class="zendesk-ref">${r.id}</span> and reviewed by the Teya support team, usually within 1 business day.</div>
+    <textarea class="chat-textarea" id="support-msg" placeholder="Describe your question or issue…"></textarea>
+    <div style="font-size:11px;color:var(--text-3);margin-top:6px">We'll reply to your registered email address.</div>`;
+  document.getElementById('ev-drawer-footer').innerHTML = `
+    <button class="btn-primary" style="flex:1" onclick="submitSupportMessage()">Send message</button>
+    <button class="btn-ghost" onclick="closeEvidenceDrawerDirect()">Cancel</button>`;
+}
+
+function submitSupportMessage() {
+  const msg = document.getElementById('support-msg')?.value?.trim();
+  if (!msg) { document.getElementById('support-msg').style.borderColor='#e34040'; return; }
+  const r = window._currentCbk;
+  document.getElementById('ev-drawer-body').innerHTML = `
+    <div class="chat-sent">
+      <div class="chat-sent-icon">✅</div>
+      <div class="chat-sent-title">Message sent</div>
+      <div class="chat-sent-sub">Your message has been linked to <span class="zendesk-ref">${r.id}</span> and sent to the support team. We'll reply to your registered email address, usually within 1 business day.</div>
+    </div>`;
+  document.getElementById('ev-drawer-footer').innerHTML = `<button class="btn-ghost" style="flex:1" onclick="closeEvidenceDrawerDirect()">Close</button>`;
+}
+
+/* ── File upload handling ── */
+function handleFileSelect(files) {
+  addFiles(Array.from(files));
+  document.getElementById('file-input').value = '';
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.remove('drag');
+  addFiles(Array.from(e.dataTransfer.files));
+}
+function addFiles(newFiles) {
+  const err = document.getElementById('file-error');
+  let hasInvalid = false;
+  newFiles.forEach(f => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    if (!['pdf','jpg','jpeg'].includes(ext)) { hasInvalid = true; return; }
+    if (!_drawerUploadedFiles.find(x => x.name===f.name)) _drawerUploadedFiles.push(f);
+  });
+  err.classList.toggle('show', hasInvalid);
+  renderUploadedFiles();
+}
+function removeFile(name) {
+  _drawerUploadedFiles = _drawerUploadedFiles.filter(f => f.name !== name);
+  renderUploadedFiles();
+}
+function renderUploadedFiles() {
+  const ul = document.getElementById('uploaded-files');
+  const btn = document.getElementById('submit-ev-btn');
+  if (!ul) return;
+  ul.innerHTML = _drawerUploadedFiles.map(f => {
+    const kb = Math.round(f.size/1024);
+    const sizeStr = kb > 1024 ? `${(kb/1024).toFixed(1)} MB` : `${kb} KB`;
+    return `<div class="uploaded-file"><div class="uploaded-file-icon">📄</div><div class="uploaded-file-name">${f.name}</div><div class="uploaded-file-size">${sizeStr}</div><button class="uploaded-file-remove" onclick="removeFile('${f.name}')">✕</button></div>`;
+  }).join('');
+  if (btn) btn.disabled = _drawerUploadedFiles.length === 0;
+}
+
+function submitEvidence() {
+  const r = window._currentCbk;
+  document.getElementById('ev-drawer-body').innerHTML = `
+    <div class="chat-sent">
+      <div class="chat-sent-icon">📬</div>
+      <div class="chat-sent-title">Evidence submitted</div>
+      <div class="chat-sent-sub">Your ${_drawerUploadedFiles.length} file${_drawerUploadedFiles.length!==1?'s':''} have been submitted for chargeback <span class="zendesk-ref">${r.id}</span> and sent to the Teya chargeback team for review.<br><br>You'll be notified once the card network responds. This typically takes <strong>30–45 days</strong>.</div>
+    </div>`;
+  document.getElementById('ev-drawer-footer').innerHTML = `<button class="btn-ghost" style="flex:1" onclick="closeEvidenceDrawerDirect()">Close</button>`;
+}
+
+function closeEvidenceDrawer(e) {
+  if (e.target === document.getElementById('ev-drawer-overlay')) closeEvidenceDrawerDirect();
+}
+function closeEvidenceDrawerDirect() {
+  document.getElementById('ev-drawer-overlay').classList.remove('open');
+}
+
+function cbkExport() { alert('Export chargeback list — CSV, XLSX or PDF'); }
+
+/* ─── Screen switching ─── */
+function showScreen(name, subEl) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (subEl) {
+    document.querySelectorAll('.sub-item').forEach(s => s.classList.remove('active'));
+    subEl.classList.add('active');
+  }
+}
+
+/* ─── Transactions logic ─── */
+const BASIC_COLS = ['Date','Store name','Source','Device ID','Status','Payment type','Sales'];
+const ADV_COLS   = ['Time','Currency','Net amount','Total fees','Settlement status','ARN','Auth code','Payment ID','Short ID','Merchant ref','Last 4 digits','Card brand','Error message'];
+let activeCols = [...BASIC_COLS], pendingCols = [...BASIC_COLS], currentPage = 0, searchVal = '';
+
+function buildModalCols() {
+  const bc = document.getElementById('basic-cols'), ac = document.getElementById('adv-cols');
+  bc.innerHTML = BASIC_COLS.map(c=>`<label class="col-item ${pendingCols.includes(c)?'checked':''}"><input type="checkbox" ${pendingCols.includes(c)?'checked':''} onchange="togglePending('${c}',this.checked)"> ${c}</label>`).join('');
+  ac.innerHTML = ADV_COLS.map(c=>`<label class="col-item ${pendingCols.includes(c)?'checked':''}"><input type="checkbox" ${pendingCols.includes(c)?'checked':''} onchange="togglePending('${c}',this.checked)"> ${c}</label>`).join('');
+}
+function togglePending(col,on){if(on&&!pendingCols.includes(col))pendingCols.push(col);else if(!on)pendingCols=pendingCols.filter(c=>c!==col);buildModalCols();}
+function unselectAllBasic(){pendingCols=pendingCols.filter(c=>!BASIC_COLS.includes(c));buildModalCols();}
+function selectAllAdv(){ADV_COLS.forEach(c=>{if(!pendingCols.includes(c))pendingCols.push(c);});buildModalCols();}
+function applyColumns(){activeCols=[...pendingCols];closeModal();renderHeaders();renderTable();}
+function toggleModal(){pendingCols=[...activeCols];buildModalCols();document.getElementById('col-modal').classList.toggle('open');}
+function closeModal(){document.getElementById('col-modal').classList.remove('open');}
+function colKey(l){return{'Date':'date','Time':'time','Store name':'store','Source':'source','Device ID':'device','Status':'status','Payment type':'paymentType','Sales':'amount','Currency':'currency','Net amount':'netAmount','Total fees':'totalFees','Settlement status':'settlementStatus','ARN':'arn','Auth code':'authCode','Payment ID':'id','Short ID':'shortId','Merchant ref':'merchantRef','Last 4 digits':'last4','Card brand':'cardBrand','Error message':'errorMessage'}[l]||l.toLowerCase();}
+function renderHeaders(){const tr=document.getElementById('col-headers');tr.innerHTML=activeCols.map(c=>`<th draggable="true" data-col="${c}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dropCol(event)"><div class="th-inner"><span class="drag-grip">⠿</span>${c}</div></th>`).join('')+'<th><div class="th-inner">Action</div></th>';}
+function sPill(s){const m={approved:`<span class="status-pill approved"><span class="status-check">✓</span> Approved</span>`,declined:`<span class="status-pill declined"><span class="status-circle">○</span> Declined</span>`,refunded:`<span class="status-pill refunded"><span class="status-circle">○</span> Refunded</span>`,pending:`<span class="status-pill pending"><span class="status-circle">○</span> Pending</span>`,'on-hold':`<span class="status-pill on-hold"><span class="status-circle">○</span> On hold</span>`};return m[s]||s;}
+function getCellValue(t,col){const k=colKey(col);if(col==='Status')return sPill(t.status);if(col==='Store name')return t.store;if(col==='Device ID')return`<span class="mono">${t.device}</span>`;if(col==='Sales')return`<strong>${t.amount}</strong>`;if(col==='Last 4 digits')return`<span class="mono">···· ${t.last4}</span>`;if(col==='ARN')return`<span class="arn">${t[k]}</span>`;if(col==='Auth code')return`<span class="mono">${t[k]}</span>`;if(col==='Payment ID')return`<span class="mono" style="font-size:11px">${t[k]}</span>`;if(col==='Card brand'){const cl={Visa:'visa',Mastercard:'mc',Amex:'amex'}[t.cardBrand]||'amex';return`<div class="card-cell"><span class="card-dot ${cl}"></span>${t.cardBrand}</div>`;}if(col==='Settlement status'){if(!t.settlementStatus||t.settlementStatus==='—')return'<span style="color:var(--text-3)">—</span>';const c=t.settlementStatus==='Settled'?'ok':'warn';return`<span class="pill ${c}">${t.settlementStatus}</span>`;}return t[k]||'<span style="color:var(--text-3)">—</span>';}
+function filterTable(){searchVal=document.getElementById('search-input').value.toLowerCase();currentPage=0;renderTable();}
+function renderTable(){const size=parseInt(document.getElementById('page-size').value);let rows=TXN_DATA.filter(t=>!searchVal||t.last4.includes(searchVal)||t.store.toLowerCase().includes(searchVal)||t.id.toLowerCase().includes(searchVal));const total=rows.length;rows=rows.slice(currentPage*size,(currentPage+1)*size);document.getElementById('txn-body').innerHTML=rows.map(t=>`<tr onclick="openCtx(event,'${t.id}')">${activeCols.map(c=>`<td>${getCellValue(t,c)}</td>`).join('')}<td><span class="action-dots" onclick="openCtx(event,'${t.id}')">···</span></td></tr>`).join('');document.getElementById('prev-btn').disabled=currentPage===0;document.getElementById('next-btn').disabled=(currentPage+1)*size>=total;}
+function prevPage(){currentPage--;renderTable();}
+function nextPage(){currentPage++;renderTable();}
+let dragSrc=null;
+function dragStart(e){dragSrc=e.currentTarget.dataset.col;e.dataTransfer.effectAllowed='move';}
+function dragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';}
+function dropCol(e){e.preventDefault();const t=e.currentTarget.dataset.col;if(!t||t===dragSrc)return;const fi=activeCols.indexOf(dragSrc),ti=activeCols.indexOf(t);if(fi<0||ti<0)return;activeCols.splice(fi,1);activeCols.splice(ti,0,dragSrc);renderHeaders();renderTable();}
+function openCtx(e,id){e.stopPropagation();const m=document.getElementById('ctx-menu');m.style.top=(e.clientY+4)+'px';m.style.left=(e.clientX-160)+'px';m.classList.add('open');}
+document.addEventListener('click',()=>document.getElementById('ctx-menu').classList.remove('open'));
+function setNav(el){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
+function setSubNav(el){document.querySelectorAll('.sub-item').forEach(s=>s.classList.remove('active'));el.classList.add('active');}
+function setTab(el){document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+
+/* init */
+renderHeaders();
+renderTable();
+renderCbkTable();
+</script>
+</body>
+</html>
